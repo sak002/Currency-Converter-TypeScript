@@ -7,6 +7,7 @@ const result = document.querySelector('.result') as HTMLElement;
 const originalCurrency = document.querySelector("#original-currency") as HTMLSelectElement;
 const convertToCurrency = document.querySelector("#convert-to-currency") as HTMLSelectElement;
 let allCurrencyNames: [string, string][] = [];
+let allCurrencyKeys: string[] = [];
 
 
 interface Data {
@@ -35,6 +36,7 @@ const fetchCurrencies = async () => {
                 keys.forEach(key => {
                     const name: string = obj.currencies[key].name;
                     allCurrencyNames.push([key, name]);
+                    allCurrencyKeys.push(key);
 
                 })
                 keys.forEach(key => {
@@ -86,19 +88,25 @@ const convert = async () => {
         input.value = "";
         return;
     }
-
-    if (!originalCurrency.value || !convertToCurrency.value) {
-        alert("Please select both currencies.");
-        return;
-    }
+    // console.log("currency ", originalCurrency.value);
 
     const currency1: string = originalCurrency.value.slice(0, 3);
     const currency2: string = convertToCurrency.value.slice(0, 3);
-    // console.log(curr2)
 
-    const conversionRate = await fetchConversionRate(currency1, currency2);
-    const amount = inputValue * conversionRate;
-    result.innerHTML = `${inputValue} ${currency1} = ${amount} ${currency2}`;
+    if (!allCurrencyKeys.includes(currency1) || !allCurrencyKeys.includes(currency2)) {
+        alert("Please select both currencies.");
+        return;
+    }
+    else {
+        
+        // console.log(curr2)
+
+        const conversionRate = await fetchConversionRate(currency1, currency2);
+        const amount = inputValue * conversionRate;
+        result.innerHTML = `${inputValue} ${currency1} = ${amount} ${currency2}`;
+
+    }
+
 
 }
 
